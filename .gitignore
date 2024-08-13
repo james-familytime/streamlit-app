@@ -1,0 +1,24 @@
+data_collector/
+.env
+.idea/
+*.pyc
+.venv/
+FamilyTime Microservices/base service/
+.DS_Store
+.vscode/
+env/
+db.sqlite3
+media/
+FamilyTime Microservices/
+celerybeat-schedule
+.terraform
+.terraform.lock.hcl
+terraform/.tflint.hcl
+venv
+app/gmail_emails - all emails.json
+app/gmail_emails - all emails.json.zip
+app/nick - 2024.txt
+app/gmail_emails.json
+app/nick - all emails.txt
+app/erd.dot
+celerybeat-schedule
