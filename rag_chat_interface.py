@@ -9,7 +9,7 @@ from urllib.parse import urljoin
 logger = logging.getLogger(__name__)
 
 # Base URL
-BASE_URL = "http://localhost:8000/"
+BASE_URL = "https://api.familytime.ai"
 
 PROVIDER_IDS = ["8b6077e6-cd85-49c1-8268-433185d1dd88", "09c2f1d2-da7f-485f-a123-13088dacbf81"]
 FAMILY_ID = "f9699984-2073-462b-af96-28e395281a8e"
