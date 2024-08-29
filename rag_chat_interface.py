@@ -9,10 +9,16 @@ from urllib.parse import urljoin
 logger = logging.getLogger(__name__)
 
 # Base URL
-BASE_URL = "https://api.familytime.ai"
+BASE_URL = "https://api.familytime.ai/"
 
-PROVIDER_IDS = ["8b6077e6-cd85-49c1-8268-433185d1dd88", "09c2f1d2-da7f-485f-a123-13088dacbf81"]
-FAMILY_ID = "f9699984-2073-462b-af96-28e395281a8e"
+PROVIDER_IDS = ["62960448-5de8-46cb-ab27-5a030d596c65", "8f0cc0ab-4566-449b-989c-1c14ce61b386"]
+FAMILY_ID = "10af0003-6a86-458d-b013-6a05b7eb7f59"
+
+AUTHORIZATION_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMzNTg0MDgxLCJpYXQiOjE3MjQ5NDQwODEsImp0aSI6IjY2Mjg4ODA4OWUxYTRiMzFiMWZmMzQ2YjM1ZGVjMTI1IiwidXNlcl9pZCI6IjRkNTM5YjgxLTVmZGYtNDUyMi1iNDhmLTA5ODQ1ZjY0NTYxZCJ9.ZjUAnKu6Ttk4O6AlAnhOW_BNOna-kBImEEJm1RxmLpo"
+
+headers = {
+    "Authorization": AUTHORIZATION_TOKEN
+}
 
 # Streamed response emulator
 def response_generator(response):
@@ -26,11 +32,13 @@ def query_rag(url, payload: dict | None = None, method: str = "post") -> Dict | 
     if method == "post":
         response = requests.post(
             url=url,
-            json=payload
+            json=payload,
+            headers=headers
         )
     else:
         response = requests.get(
-            url=url
+            url=url,
+            headers=headers
         )
 
     if response and response.status_code == 200:
