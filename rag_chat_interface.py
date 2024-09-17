@@ -14,7 +14,7 @@ BASE_URL = "https://api.familytime.ai/"
 PROVIDER_IDS = ["62960448-5de8-46cb-ab27-5a030d596c65", "8f0cc0ab-4566-449b-989c-1c14ce61b386"]
 FAMILY_ID = "10af0003-6a86-458d-b013-6a05b7eb7f59"
 
-AUTHORIZATION_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMzNTg0MDgxLCJpYXQiOjE3MjQ5NDQwODEsImp0aSI6IjY2Mjg4ODA4OWUxYTRiMzFiMWZmMzQ2YjM1ZGVjMTI1IiwidXNlcl9pZCI6IjRkNTM5YjgxLTVmZGYtNDUyMi1iNDhmLTA5ODQ1ZjY0NTYxZCJ9.ZjUAnKu6Ttk4O6AlAnhOW_BNOna-kBImEEJm1RxmLpo"
+AUTHORIZATION_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM0MDk2OTk4LCJpYXQiOjE3MjU0NTY5OTgsImp0aSI6IjNkNTdkNmU3ZDY1NzRkMmI5ZTM0MDczYTNmYTU1MTFiIiwidXNlcl9pZCI6IjBiNmUzNGIyLTRmM2EtNGYwNi1iMjMwLTExYmMwZjZkZWY2NCJ9.fVrhSVy-OwZKOwVTc15tBPPEedYTILNFixDFNjILJCk"
 
 headers = {
     "Authorization": AUTHORIZATION_TOKEN
@@ -28,26 +28,27 @@ def response_generator(response):
 
 def query_rag(url, payload: dict | None = None, method: str = "post") -> Dict | None:
     response: dict | None = None
+    try:
+        if method == "post":
+            response = requests.post(
+                url=url,
+                json=payload,
+                headers=headers,
+            )
+        else:
+            response = requests.get(
+                url=url,
+                headers=headers
+            )
 
-    if method == "post":
-        response = requests.post(
-            url=url,
-            json=payload,
-            headers=headers
-        )
-    else:
-        response = requests.get(
-            url=url,
-            headers=headers
-        )
-
-    if response and response.status_code == 200:
-        return response.json()
-
-    return None
+        if response and response.status_code == 200:
+            return response.json()
+    except Exception as e:
+        logger.critical(f"Something went wrong due to error: {e}")
+        return None
 
 def get_previous_messages(conversation_id: str) -> List[Dict]:
-    query_url = f"../api/families/{FAMILY_ID}/conversations/{conversation_id}/messages/"
+    query_url = f"../api/v1/families/{FAMILY_ID}/conversations/{conversation_id}/messages/"
     full_url = urljoin(BASE_URL, query_url)
 
     response = query_rag(
@@ -61,7 +62,7 @@ def get_previous_messages(conversation_id: str) -> List[Dict]:
         return []
 
 def continue_chat(query: str, conversation_id: str) -> str:
-    query_url = f"../api/families/{FAMILY_ID}/conversations/{conversation_id}/messages/"
+    query_url = f"../api/v1/families/{FAMILY_ID}/conversations/{conversation_id}/messages/"
     full_url = urljoin(BASE_URL, query_url)
 
     payload = {
@@ -81,7 +82,7 @@ def continue_chat(query: str, conversation_id: str) -> str:
 
 
 def start_chat(query: str) -> str:
-    query_url = f"../api/families/{FAMILY_ID}/conversations/start/"
+    query_url = f"../api/v1/families/{FAMILY_ID}/conversations/start/"
     full_url = urljoin(BASE_URL, query_url)
 
     payload = {
