@@ -1,7 +1,21 @@
 import requests
 from json import loads, JSONDecodeError
+import aiohttp
 
-def main():
+
+async def fetch_streaming_response():
+    url = "http://localhost:8000/stream"  # Update with your FastAPI URL
+
+    async with aiohttp.ClientSession() as session:
+        async with session.post(url) as response:
+            if response.status == 200:
+                # This will start printing each chunk as soon as it's available
+                async for chunk in response.content.iter_any():
+                    print(chunk.decode('utf-8'))  # Process the streamed chunk here
+            else:
+                print(f"Error: {response.status}")
+
+async def main():
     query: str = "Hi"
     authorization: str = (
         "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM2NTM0Mjg1LCJpYXQiOjE3Mjc4OTQyODUsImp0aSI6IjBjNTc2ZWYwNjBjNDQ3ZDU5ZWIyYjc2YjgxMWExZTc2IiwidXNlcl9pZCI6ImJiZjAwZDk5LTFiMjYtNGE4Ny1iMzJiLTE5MTk5NjkwYTQ0NSJ9.L3IGuNPq95wchYEjE2Q3zwNIuCPJM56W8G30gjp-VSM"
@@ -20,9 +34,13 @@ def main():
             stream=True,  # Since we are receiving streamed SSE
         )
 
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url) as response:
+    
+
         if response.status_code == 200:
             # Process the response stream
-            for chunk in response.iter_content(chunk_size=1024, decode_unicode=True):
+            for chunk in response.i(chunk_size=1024, decode_unicode=True):
                 if chunk:  # Filter out keep-alive chunks
                     # SSE typically comes with `data:` prefix, extract the JSON after `data:`
                     for line in chunk.splitlines():

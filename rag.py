@@ -1,172 +1,85 @@
 import streamlit as st
-import requests
+import aiohttp
+import asyncio
 import logging
-import time
-from typing import List, Dict
 from urllib.parse import urljoin
 from json import loads, JSONDecodeError
+
+# Logger setup
 logger = logging.getLogger(__name__)
 
-# Base URL
-BASE_URL = "http://localhost:9000/"
-
-
+# Base URL and headers
+BASE_URL = "https://staging.api.familytime.ai/"
 FAMILY_ID = "10af0003-6a86-458d-b013-6a05b7eb7f59"
-
 AUTHORIZATION_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM2OTYxNDMwLCJpYXQiOjE3MjgzMjE0MzAsImp0aSI6IjM2YmUyZWQyZjRiMjRiOTA4YWRkNjIyZmIxM2JlMjY3IiwidXNlcl9pZCI6IjRkNTM5YjgxLTVmZGYtNDUyMi1iNDhmLTA5ODQ1ZjY0NTYxZCJ9.jiCTj_IeCWQxMoM8lCxIDj_7OEcmJCWky_0_6oX__uI"
 
 headers = {
-    "Authorization": AUTHORIZATION_TOKEN
+    "Authorization": AUTHORIZATION_TOKEN,
+    "Content-Type": "application/json",
 }
 
-def query_rag(url, payload: dict | None = None, method: str = "post") -> Dict | None:
-    response: dict | None = None
-    try:
-        if method == "post":
-            response = requests.post(
-                url=url,
-                json=payload,
-                headers=headers,
-            )
-        else:
-            response = requests.get(
-                url=url,
-                headers=headers
-            )
-
-        if response and response.status_code == 200:
-            return response.json()
-    except Exception as e:
-        logger.critical(f"Something went wrong due to error: {e}")
-        return None
-
-def get_previous_messages(conversation_id: str) -> List[Dict]:
-    query_url = f"../api/v1/families/{FAMILY_ID}/conversations/{conversation_id}/messages/"
-    full_url = urljoin(BASE_URL, query_url)
-
-    response = query_rag(
-        url=full_url,
-        method='get'
-    )
-
-    if response:
-        return response
-    else:
-        return []
-
-# Use generators for streaming responses
-def continue_chat(query: str, conversation_id: str):
-    query_url = f"../api/v1/families/{FAMILY_ID}/conversations/{conversation_id}/messages/"
-    full_url = urljoin(BASE_URL, query_url)
-
-    payload = {
-        "query": query,
-    }
-
-    try:
-        response = requests.post(
-            full_url,
-            json=payload,
-            headers=headers,
-            stream=True,  # Only necessary for large responses
-        )
-
-        # Check if the request was successful (status code 200 OK)
-        if response.status_code == 200:
-            # Process the response stream
-            for chunk in response.iter_content(chunk_size=1024, decode_unicode=True):
-                if chunk:  # Filter out keep-alive chunks
-                    # SSE typically comes with `data:` prefix, extract the JSON after `data:`
-                    for line in chunk.splitlines():
-                        if line.startswith("data:"):
-                            try:
-                                # Remove the "data:" prefix and strip any extra spaces
+# Asynchronous helper to fetch streaming responses
+async def fetch_stream(url: str, payload: dict):
+    async with aiohttp.ClientSession() as session:
+        async with session.post(url, json=payload, headers=headers) as response:
+            if response.status == 200:
+                async for chunk in response.content.iter_chunked(500):
+                    if chunk:
+                        chunk = chunk.decode("utf-8")
+                        for line in chunk.splitlines():
+                            if line.startswith("data:"):
                                 sse_data = line[5:].strip()
-                                
-                                # Load the JSON data
-                                json_data = loads(sse_data)
-                                
-                                # Access chunk_type and data fields
-                                chunk_type = json_data.get('chunk_type', None)
-                                data = json_data.get('data', None)
-                                
-                                # Handle the decoded data based on chunk_type
-                                if chunk_type != "session" and chunk_type != "terminate":
-                                     yield data
-                                elif chunk_type == "session":
-                                    st.session_state.conversation_id = data.get('id')
-                                elif chunk_type == "terminate":
-                                    print("Session terminated")
-                                else:
-                                    print(f"Unknown chunk_type: {chunk_type}, Data: {data}")
+                                try:
+                                    json_data = loads(sse_data)
+                                    yield json_data
+                                except JSONDecodeError:
+                                    logger.error("Failed to decode JSON from SSE data")
+            else:
+                logger.error(f"Request failed with status {response.status}")
+                yield None
 
-                            except JSONDecodeError:
-                                print("Failed to decode JSON from SSE data")
-        else:
-            print(f"Request failed with status code {response.status_code}")
-            print(response.text)  # To see the error message from the server
-    except requests.exceptions.RequestException as e:
-        print(f"An error occurred: {e}")
-
-def start_chat(query: str):
+# Async function to start a new chat session
+async def start_chat(query: str):
     query_url = f"../api/v1/families/{FAMILY_ID}/conversations/start/"
     full_url = urljoin(BASE_URL, query_url)
+    payload = {"query": query}
+    async for json_data in fetch_stream(full_url, payload):
+        if json_data:
+            chunk_type = json_data.get('chunk_type')
+            data = json_data.get('data')
+            if chunk_type == "session":
+                st.session_state.conversation_id = data
+            elif chunk_type == "terminate":
+                return
+            else:
+                yield data
 
-    payload = {
-        "query": query,
-    }
+# Async function to continue an existing chat session
+async def continue_chat(query: str, conversation_id: str):
+    query_url = f"../api/v1/families/{FAMILY_ID}/conversations/{conversation_id}/messages/"
+    full_url = urljoin(BASE_URL, query_url)
+    payload = {"query": query}
+    async for json_data in fetch_stream(full_url, payload):
+        if json_data:
+            chunk_type = json_data.get('chunk_type')
+            data = json_data.get('data')
+            if chunk_type == "terminate":
+                return
+            else:
+                yield data
 
-    try:
-        response = requests.post(
-            full_url,
-            json=payload,
-            headers=headers,
-            stream=True,  # Only necessary for large responses
-        )
-
-        # Check if the request was successful (status code 200 OK)
-        if response.status_code == 200:
-            # Process the response stream
-            for chunk in response.iter_content(chunk_size=500, decode_unicode=True):
-                if chunk:  # Filter out keep-alive chunks
-                    # SSE typically comes with `data:` prefix, extract the JSON after `data:`
-                    for line in chunk.splitlines():
-                        if line.startswith("data:"):
-                            try:
-                                # Remove the "data:" prefix and strip any extra spaces
-                                sse_data = line[5:].strip()
-                                
-                                # Load the JSON data
-                                json_data = loads(sse_data)
-                                
-                                # Access chunk_type and data fields
-                                chunk_type = json_data.get('chunk_type', None)
-                                data = json_data.get('data', None)
-                                
-                                # Handle the decoded data based on chunk_type
-                                if chunk_type != "session" and chunk_type != "sources" and chunk_type != "terminate":
-                                     yield data
-                                elif chunk_type == "session":
-                                    st.session_state.conversation_id = data
-                                    print(f"Session data: {data}")
-                                elif chunk_type == "terminate":
-                                    print("Session terminated")
-                                else:
-                                    print(f"Unknown chunk_type: {chunk_type}, Data: {data}")
-
-                            except JSONDecodeError:
-                                print("Failed to decode JSON from SSE data")
-        else:
-            print(f"Request failed with status code {response.status_code}")
-            print(response.text)  # To see the error message from the server
-
-    except requests.exceptions.RequestException as e:
-        print(f"An error occurred: {e}")
-
+# Helper function to display previous messages
+def get_previous_messages(conversation_id: str):
+    query_url = f"../api/v1/families/{FAMILY_ID}/conversations/{conversation_id}/messages/"
+    full_url = urljoin(BASE_URL, query_url)
+    # Simulate fetching previous messages for the current conversation
+    response = []
+    #response = query_rag(url=full_url, method='get')
+    return response or []
 
 # Streamlit app title
 st.title("FamilyTime RAG Chat")
-st.write("Disclaimer: This is intended for testing the RAG CHAT. \nOnly limited data for Nick's family can be queried")
+st.write("This is intended for testing the RAG Chat. Limited data for Nick's family can be queried.")
 
 # Initialize session state for messages and conversation ID
 if "messages" not in st.session_state:
@@ -175,7 +88,7 @@ if "messages" not in st.session_state:
 if "conversation_id" not in st.session_state:
     st.session_state.conversation_id = None
 
-# Retrieve previous messages if conversation_id exists
+# Retrieve and display previous messages if conversation ID exists
 if st.session_state.conversation_id and not st.session_state.messages:
     st.session_state.messages = get_previous_messages(st.session_state.conversation_id)
 
@@ -186,20 +99,29 @@ for message in st.session_state.messages:
 
 # Handle user input and stream responses
 if prompt := st.chat_input("What is up?"):
-    # Display user message in chat message container
+    # Display user message in chat
     st.chat_message("user").markdown(prompt)
-    # Add user message to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
 
-    # Display assistant response in chat message container progressively
-    with st.chat_message("assistant"):
-        if st.session_state.conversation_id:
+    # Placeholder for assistant's response
+    assistant_response_placeholder = st.empty()
+
+    # Coroutine to handle streaming responses and display them
+    async def display_streamed_response():
+        responses = []
+        """if st.session_state.conversation_id:
             response_stream = continue_chat(query=prompt, conversation_id=st.session_state.conversation_id)
-        else:
-            response_stream = start_chat(query=prompt)
+        else:"""
 
-        # Use write_stream() to handle the streamed response
-        st.write_stream(response_stream)
+        response_stream = start_chat(query=prompt)
 
-        # Store assistant response in session state for chat history
-        st.session_state.messages.append({"role": "assistant", "content": ''.join(response_stream)})
+        # Update the assistant's response progressively
+        async for chunk in response_stream:
+            responses.append(chunk)
+            assistant_response_placeholder.markdown(''.join(responses))
+
+        # Append final response to session state
+        st.session_state.messages.append({"role": "assistant", "content": ''.join(responses)})
+
+    # Run the streaming coroutine within Streamlit's async runtime
+    asyncio.run(display_streamed_response())
