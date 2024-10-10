@@ -23,7 +23,7 @@ async def fetch_stream(url: str, payload: dict):
     async with aiohttp.ClientSession() as session:
         async with session.post(url, json=payload, headers=headers) as response:
             if response.status == 200:
-                async for chunk in response.content.iter_chunked(500):
+                async for chunk in response.content.iter_chunked(1024):
                     if chunk:
                         chunk = chunk.decode("utf-8")
                         for line in chunk.splitlines():
