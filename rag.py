@@ -109,16 +109,12 @@ if prompt := st.chat_input("What is up?"):
     # Coroutine to handle streaming responses and display them
     async def display_streamed_response():
         responses = []
-        """if st.session_state.conversation_id:
-            response_stream = continue_chat(query=prompt, conversation_id=st.session_state.conversation_id)
-        else:"""
-
         response_stream = start_chat(query=prompt)
+        st.write_stream(response_stream)
 
         # Update the assistant's response progressively
         async for chunk in response_stream:
             responses.append(chunk)
-            assistant_response_placeholder.markdown(''.join(responses))
 
         # Append final response to session state
         st.session_state.messages.append({"role": "assistant", "content": ''.join(responses)})
