@@ -9,7 +9,7 @@ from json import loads, JSONDecodeError
 logger = logging.getLogger(__name__)
 
 # Base URL and headers
-BASE_URL = "https://staging.api.familytime.ai/"
+BASE_URL = "https://staging.rag.api.familytime.ai/"
 FAMILY_ID = "10af0003-6a86-458d-b013-6a05b7eb7f59"
 AUTHORIZATION_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM2OTYxNDMwLCJpYXQiOjE3MjgzMjE0MzAsImp0aSI6IjM2YmUyZWQyZjRiMjRiOTA4YWRkNjIyZmIxM2JlMjY3IiwidXNlcl9pZCI6IjRkNTM5YjgxLTVmZGYtNDUyMi1iNDhmLTA5ODQ1ZjY0NTYxZCJ9.jiCTj_IeCWQxMoM8lCxIDj_7OEcmJCWky_0_6oX__uI"
 
