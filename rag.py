@@ -23,7 +23,7 @@ async def fetch_stream(url: str, payload: dict):
     async with aiohttp.ClientSession() as session:
         async with session.post(url, json=payload, headers=headers) as response:
             if response.status == 200:
-                async for chunk in response.content.iter_chunked(1024):
+                async for chunk in response.content.iter_any():
                     if chunk:
                         chunk = chunk.decode("utf-8")
                         for line in chunk.splitlines():
@@ -51,7 +51,7 @@ async def start_chat(query: str):
                 st.session_state.conversation_id = data
             elif chunk_type == "terminate":
                 return
-            else:
+            elif chunk_type == "llm_data":
                 yield data
 
 # Async function to continue an existing chat session
