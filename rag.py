@@ -4,12 +4,13 @@ import asyncio
 import logging
 from urllib.parse import urljoin
 from json import loads, JSONDecodeError
+from typing import AsyncGenerator
 
 # Logger setup
 logger = logging.getLogger(__name__)
 
 # Base URL and headers
-BASE_URL = "https://staging.rag.familytime.ai/"
+BASE_URL = "http://localhost:9000/"
 FAMILY_ID = "10af0003-6a86-458d-b013-6a05b7eb7f59"
 AUTHORIZATION_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM2OTYxNDMwLCJpYXQiOjE3MjgzMjE0MzAsImp0aSI6IjM2YmUyZWQyZjRiMjRiOTA4YWRkNjIyZmIxM2JlMjY3IiwidXNlcl9pZCI6IjRkNTM5YjgxLTVmZGYtNDUyMi1iNDhmLTA5ODQ1ZjY0NTYxZCJ9.jiCTj_IeCWQxMoM8lCxIDj_7OEcmJCWky_0_6oX__uI"
 
@@ -56,7 +57,7 @@ async def start_chat(query: str):
 
 # Async function to continue an existing chat session
 async def continue_chat(query: str, conversation_id: str):
-    query_url = f"../api/v1/families/{FAMILY_ID}/conversations/{conversation_id}/messages/"
+    query_url = f"../api/v1/families/{FAMILY_ID}/conversations/{conversation_id}/continue/"
     full_url = urljoin(BASE_URL, query_url)
     payload = {"query": query}
     async for json_data in fetch_stream(full_url, payload):
@@ -65,7 +66,7 @@ async def continue_chat(query: str, conversation_id: str):
             data = json_data.get('data')
             if chunk_type == "terminate":
                 return
-            else:
+            elif chunk_type == "llm_data":
                 yield data
 
 # Helper function to display previous messages
@@ -109,7 +110,12 @@ if prompt := st.chat_input("What is up?"):
     # Coroutine to handle streaming responses and display them
     async def display_streamed_response():
         responses = []
-        response_stream = start_chat(query=prompt)
+        response_stream: AsyncGenerator = None
+
+        if st.session_state.conversation_id:
+            response_stream = continue_chat(query=prompt, conversation_id=st.session_state.conversation_id)
+        else:
+            response_stream = start_chat(query=prompt)
 
         # Update the assistant's response progressively
         async for chunk in response_stream:
