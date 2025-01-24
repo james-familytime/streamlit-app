@@ -10,9 +10,10 @@ from typing import AsyncGenerator
 logger = logging.getLogger(__name__)
 
 # Base URL and headers
-BASE_URL = "https://staging.rag.familytime.ai/"
-FAMILY_ID = "10af0003-6a86-458d-b013-6a05b7eb7f59"
-AUTHORIZATION_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM2OTYxNDMwLCJpYXQiOjE3MjgzMjE0MzAsImp0aSI6IjM2YmUyZWQyZjRiMjRiOTA4YWRkNjIyZmIxM2JlMjY3IiwidXNlcl9pZCI6IjRkNTM5YjgxLTVmZGYtNDUyMi1iNDhmLTA5ODQ1ZjY0NTYxZCJ9.jiCTj_IeCWQxMoM8lCxIDj_7OEcmJCWky_0_6oX__uI"
+BASE_URL = "https://rag.familytime.ai"
+FAMILY_ID = "9f0af44f-4866-40dd-b438-7eb865588c8a"
+USER_ID = "a3521b75-870f-4d69-bef3-7e78c4976b4d"
+AUTHORIZATION_TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM3OTk1NDA2LCJpYXQiOjE3Mzc1NjM0MDYsImp0aSI6IjY5NjU3NTllNjVmNTQwYmM5NWM2Yjk0ZTc2MDA0MzJmIiwidXNlcl9pZCI6ImEzNTIxYjc1LTg3MGYtNGQ2OS1iZWYzLTdlNzhjNDk3NmI0ZCJ9.bVosSFjb-6qFvF8mVkveHnzBhDbOryF33823JdCnXGk"
 
 headers = {
     "Authorization": AUTHORIZATION_TOKEN,
@@ -43,7 +44,10 @@ async def fetch_stream(url: str, payload: dict):
 async def start_chat(query: str):
     query_url = f"../api/v1/families/{FAMILY_ID}/conversations/start/"
     full_url = urljoin(BASE_URL, query_url)
-    payload = {"query": query}
+    payload = {
+        "query": query,
+        "user_id": USER_ID,
+    }
     async for json_data in fetch_stream(full_url, payload):
         if json_data:
             chunk_type = json_data.get('chunk_type')
@@ -59,7 +63,10 @@ async def start_chat(query: str):
 async def continue_chat(query: str, conversation_id: str):
     query_url = f"../api/v1/families/{FAMILY_ID}/conversations/{conversation_id}/continue/"
     full_url = urljoin(BASE_URL, query_url)
-    payload = {"query": query}
+    payload = {
+        "query": query,
+        "user_id": USER_ID,
+    }
     async for json_data in fetch_stream(full_url, payload):
         if json_data:
             chunk_type = json_data.get('chunk_type')
@@ -72,15 +79,15 @@ async def continue_chat(query: str, conversation_id: str):
 # Helper function to display previous messages
 def get_previous_messages(conversation_id: str):
     query_url = f"../api/v1/families/{FAMILY_ID}/conversations/{conversation_id}/messages/"
-    full_url = urljoin(BASE_URL, query_url)
+    # full_url = urljoin(BASE_URL, query_url)
     # Simulate fetching previous messages for the current conversation
     response = []
     #response = query_rag(url=full_url, method='get')
     return response or []
 
 # Streamlit app title
-st.title("FamilyTime RAG Chat")
-st.write("This is intended for testing the RAG Chat. Limited data for Nick's family can be queried.")
+st.title("FamilyTime RAG Chat (Production)")
+st.write("This is intended for testing the RAG Chat on production. Data for only Nick's family can be queried.")
 
 # Initialize session state for messages and conversation ID
 if "messages" not in st.session_state:

@@ -22,3 +22,6 @@ app/gmail_emails.json
 app/nick - all emails.txt
 app/erd.dot
 celerybeat-schedule
+agent.ipynb
+calendar.pdf
+pdf_loader.ipynb
