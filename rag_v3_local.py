@@ -15,7 +15,7 @@ nest_asyncio.apply()
 
 # --- Endpoint URLs (adjust as needed) ---
 FT_DATA_BASE_URL = "https://staging.api.familytime.ai"
-RAG_BASE_URL = "http://localhost:9000"
+RAG_BASE_URL = "https://staging.rag.familytime.ai"
 USER_ID = "09e2770e-73d7-4993-aec9-945b50a2a5d8"
 AUTHORIZATION = (
     "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."
