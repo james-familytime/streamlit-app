@@ -1,9 +1,9 @@
 import streamlit as st
 import requests
 import aiohttp
-import nest_asyncio
+# import nest_asyncio
 from urllib.parse import urljoin
-import asyncio
+# import asyncio
 from json import loads, JSONDecodeError
 import logging
 
@@ -11,7 +11,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 # Enable nested event loops for async calls within Streamlit.
-nest_asyncio.apply()
+# nest_asyncio.apply()
 
 # --- Endpoint URLs (adjust as needed) ---
 FT_DATA_BASE_URL = "https://staging.api.familytime.ai"
