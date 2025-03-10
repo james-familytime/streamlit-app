@@ -1,0 +1,1187 @@
+{
+    "$defs": {
+        "ActionableLink": {
+            "properties": {
+                "chain_of_thought": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "The chain of thought followed to identify the actionable link",
+                    "type": "array"
+                },
+                "source": {
+                    "$ref": "#/$defs/Source",
+                    "title": "The source information of the actionable link"
+                },
+                "name": {
+                    "title": "The name of the actionable link",
+                    "type": "string"
+                },
+                "url": {
+                    "format": "uri",
+                    "maxLength": 2083,
+                    "minLength": 1,
+                    "title": "The URL of the actionable link",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "chain_of_thought",
+                "source",
+                "name",
+                "url"
+            ],
+            "title": "ActionableLink",
+            "type": "object"
+        },
+        "AfterSchoolAndSummerSchool": {
+            "properties": {
+                "chain_of_thought": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "The chain of thought followed to identify the afterschool program",
+                    "type": "array"
+                },
+                "afterschool_programs": {
+                    "items": {
+                        "$ref": "#/$defs/Program"
+                    },
+                    "title": "The afterschool programs offered by the school",
+                    "type": "array"
+                },
+                "summer_school_programs": {
+                    "items": {
+                        "$ref": "#/$defs/Program"
+                    },
+                    "title": "The summer school programs offered by the school",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "chain_of_thought",
+                "afterschool_programs",
+                "summer_school_programs"
+            ],
+            "title": "AfterSchoolAndSummerSchool",
+            "type": "object"
+        },
+        "Age": {
+            "properties": {
+                "age": {
+                    "examples": [
+                        18,
+                        4
+                    ],
+                    "title": "The age value",
+                    "type": "integer"
+                },
+                "unit": {
+                    "$ref": "#/$defs/AgeUnit",
+                    "examples": [
+                        "month",
+                        "year"
+                    ],
+                    "title": "The unit of the age value."
+                }
+            },
+            "required": [
+                "age",
+                "unit"
+            ],
+            "title": "Age",
+            "type": "object"
+        },
+        "AgeUnit": {
+            "enum": [
+                "month",
+                "year"
+            ],
+            "title": "AgeUnit",
+            "type": "string"
+        },
+        "Contact": {
+            "properties": {
+                "chain_of_thought": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "The chain of thought followed to identify the contact information",
+                    "type": "array"
+                },
+                "phone": {
+                    "title": "The phone number of the contact formatted in e.164",
+                    "type": "string"
+                },
+                "source": {
+                    "$ref": "#/$defs/Source",
+                    "title": "The source information of the contact"
+                }
+            },
+            "required": [
+                "chain_of_thought",
+                "phone",
+                "source"
+            ],
+            "title": "Contact",
+            "type": "object"
+        },
+        "District": {
+            "properties": {
+                "chain_of_thought": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "The chain of thought followed during the extraction process",
+                    "type": "array"
+                },
+                "district_url": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/DistrictUrl"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "The district URL"
+                },
+                "district_schools": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/DistrictSchools"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "The schools in the district"
+                },
+                "district_details": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/DistrictDetails"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "The details of the district"
+                }
+            },
+            "required": [
+                "chain_of_thought"
+            ],
+            "title": "District",
+            "type": "object"
+        },
+        "DistrictDetails": {
+            "properties": {
+                "chain_of_thought": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "The chain of thought followed to identify the district details",
+                    "type": "array"
+                },
+                "district_name": {
+                    "title": "The name of the district",
+                    "type": "string"
+                },
+                "district_url": {
+                    "format": "uri",
+                    "maxLength": 2083,
+                    "minLength": 1,
+                    "title": "The URL of the district website",
+                    "type": "string"
+                },
+                "contact": {
+                    "$ref": "#/$defs/Contact",
+                    "title": "The contact information for the district"
+                },
+                "location": {
+                    "$ref": "#/$defs/Location",
+                    "title": "The location information for the district"
+                }
+            },
+            "required": [
+                "chain_of_thought",
+                "district_name",
+                "district_url",
+                "contact",
+                "location"
+            ],
+            "title": "DistrictDetails",
+            "type": "object"
+        },
+        "DistrictSchool": {
+            "properties": {
+                "chain_of_thought": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "The chain of thought followed to identify the school URL",
+                    "type": "array"
+                },
+                "school_name": {
+                    "title": "The name of the school",
+                    "type": "string"
+                },
+                "school_url": {
+                    "format": "uri",
+                    "maxLength": 2083,
+                    "minLength": 1,
+                    "title": "The URL of the school website",
+                    "type": "string"
+                },
+                "name_in_url_path": {
+                    "title": "The name of the school in the URL path",
+                    "type": "string"
+                },
+                "sources": {
+                    "items": {
+                        "$ref": "#/$defs/Source"
+                    },
+                    "title": "The source information of the extracted school",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "chain_of_thought",
+                "school_name",
+                "school_url",
+                "name_in_url_path",
+                "sources"
+            ],
+            "title": "DistrictSchool",
+            "type": "object"
+        },
+        "DistrictSchools": {
+            "properties": {
+                "schools": {
+                    "items": {
+                        "$ref": "#/$defs/DistrictSchool"
+                    },
+                    "title": "The list of schools in the district",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "schools"
+            ],
+            "title": "DistrictSchools",
+            "type": "object"
+        },
+        "DistrictUrl": {
+            "properties": {
+                "chain_of_thought": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "The chain of thought followed to identify the district URL",
+                    "type": "array"
+                },
+                "source": {
+                    "$ref": "#/$defs/Source",
+                    "title": "The source information of the district URL"
+                },
+                "district_url": {
+                    "anyOf": [
+                        {
+                            "format": "uri",
+                            "maxLength": 2083,
+                            "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "The URL of the district website"
+                },
+                "url_architecture": {
+                    "$ref": "#/$defs/UrlArchitecture",
+                    "title": "The architecture of the identified district URL"
+                }
+            },
+            "required": [
+                "chain_of_thought",
+                "source",
+                "url_architecture"
+            ],
+            "title": "DistrictUrl",
+            "type": "object"
+        },
+        "Division": {
+            "properties": {
+                "chain_of_thought": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "The chain of thought followed to identify the division",
+                    "type": "array"
+                },
+                "source": {
+                    "$ref": "#/$defs/Source",
+                    "title": "The source information of the division"
+                },
+                "name": {
+                    "examples": [
+                        "Primary School",
+                        "Lower School",
+                        "Middle School",
+                        "Upper School"
+                    ],
+                    "title": "The school-specific name of the division",
+                    "type": "string"
+                },
+                "alias": {
+                    "examples": [
+                        "PS",
+                        "LS",
+                        "MS",
+                        "US"
+                    ],
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Alternative names or commonly used abbreviation for the school-specific name",
+                    "type": "array"
+                },
+                "global_name": {
+                    "$ref": "#/$defs/GlobalDivisionEnum",
+                    "examples": [
+                        "Lower/Primary/Elementary",
+                        "Middle/Junior High/Intermediate",
+                        "Upper/High School"
+                    ],
+                    "title": "The global standardized name for the division (mapped from school-specific name)"
+                },
+                "location": {
+                    "$ref": "#/$defs/Location",
+                    "title": "The campus location of the division"
+                },
+                "contact": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/Contact"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "The contact information for the division"
+                },
+                "email_domains": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/EmailDomain"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "The email domains used by the division"
+                },
+                "grades": {
+                    "items": {
+                        "$ref": "#/$defs/GradeWithAge"
+                    },
+                    "title": "The grades offered by the division",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "chain_of_thought",
+                "source",
+                "name",
+                "alias",
+                "global_name",
+                "location",
+                "grades"
+            ],
+            "title": "Division",
+            "type": "object"
+        },
+        "DivisionGrades": {
+            "properties": {
+                "chain_of_thought": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "The chain of thought followed to identify the divisions and grades",
+                    "type": "array"
+                },
+                "divisions": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/Division"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "The divisions and grades offered by the school."
+                }
+            },
+            "required": [
+                "chain_of_thought"
+            ],
+            "title": "DivisionGrades",
+            "type": "object"
+        },
+        "EmailDomain": {
+            "properties": {
+                "chain_of_thought": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "The chain of thought followed to identify the email domain",
+                    "type": "array"
+                },
+                "source": {
+                    "$ref": "#/$defs/Source",
+                    "title": "The source information of the email domain"
+                },
+                "domain": {
+                    "title": "The domain of the email address",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "chain_of_thought",
+                "source",
+                "domain"
+            ],
+            "title": "EmailDomain",
+            "type": "object"
+        },
+        "GlobalDivisionEnum": {
+            "enum": [
+                "Early Childhood/Pre-School",
+                "Lower/Primary/Elementary",
+                "Middle/Junior High/Intermediate",
+                "Upper/High School"
+            ],
+            "title": "GlobalDivisionEnum",
+            "type": "string"
+        },
+        "GradeEnum": {
+            "enum": [
+                "N",
+                "N2",
+                "PRE-K1",
+                "PRE-K2",
+                "PRE-K",
+                "K",
+                "Grade 1",
+                "Grade 2",
+                "Grade 3",
+                "Grade 4",
+                "Grade 5",
+                "Grade 6",
+                "Grade 7",
+                "Grade 8",
+                "Grade 9",
+                "Grade 10",
+                "Grade 11",
+                "Grade 12"
+            ],
+            "title": "GradeEnum",
+            "type": "string"
+        },
+        "GradeWithAge": {
+            "properties": {
+                "name": {
+                    "examples": [
+                        "Kindergarten",
+                        "Stepping Stones 1",
+                        "Primary 1",
+                        "Grade 1"
+                    ],
+                    "title": "The school-specific name of the grade",
+                    "type": "string"
+                },
+                "alias": {
+                    "examples": [
+                        "K",
+                        "SS1",
+                        "P1",
+                        "G1"
+                    ],
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Alternative names or commonly used abbreviation for the school-specific grade name",
+                    "type": "array"
+                },
+                "global_name": {
+                    "$ref": "#/$defs/GradeEnum",
+                    "title": "The global standardized name for the grade (mapped from school-specific name)"
+                },
+                "minimum_age": {
+                    "$ref": "#/$defs/Age",
+                    "title": "The minimum age for the grade"
+                },
+                "maximum_age": {
+                    "$ref": "#/$defs/Age",
+                    "title": "The maximum age for the grade"
+                }
+            },
+            "required": [
+                "name",
+                "alias",
+                "global_name",
+                "minimum_age",
+                "maximum_age"
+            ],
+            "title": "GradeWithAge",
+            "type": "object"
+        },
+        "GradeWithoutAge": {
+            "properties": {
+                "source": {
+                    "$ref": "#/$defs/Source",
+                    "title": "The source information of the grade"
+                },
+                "name": {
+                    "examples": [
+                        "Kindergarten",
+                        "Stepping Stones 1",
+                        "Primary 1",
+                        "Grade 1"
+                    ],
+                    "title": "The school-specific name of the grade",
+                    "type": "string"
+                },
+                "alias": {
+                    "examples": [
+                        "K",
+                        "SS1",
+                        "P1",
+                        "G1"
+                    ],
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Alternative names or commonly used abbreviation for the school-specific grade name",
+                    "type": "array"
+                },
+                "global_name": {
+                    "$ref": "#/$defs/GradeEnum",
+                    "title": "The global standardized name for the grade (mapped from school-specific name)"
+                }
+            },
+            "required": [
+                "source",
+                "name",
+                "alias",
+                "global_name"
+            ],
+            "title": "GradeWithoutAge",
+            "type": "object"
+        },
+        "Location": {
+            "properties": {
+                "chain_of_thought": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "The chain of thought followed to identify the location",
+                    "type": "array"
+                },
+                "address": {
+                    "title": "The address of the location formatted for Google Maps",
+                    "type": "string"
+                },
+                "latitude": {
+                    "title": "The latitude of the location",
+                    "type": "number"
+                },
+                "longitude": {
+                    "title": "The longitude of the location",
+                    "type": "number"
+                },
+                "timezone": {
+                    "title": "The timezone of the location",
+                    "type": "string"
+                },
+                "city": {
+                    "title": "The city of the location",
+                    "type": "string"
+                },
+                "state": {
+                    "title": "The state of the location",
+                    "type": "string"
+                },
+                "country": {
+                    "title": "The country of the location",
+                    "type": "string"
+                },
+                "zip_code": {
+                    "title": "The zip code of the location",
+                    "type": "string"
+                },
+                "sources": {
+                    "items": {
+                        "$ref": "#/$defs/Source"
+                    },
+                    "title": "The source information of the location",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "chain_of_thought",
+                "address",
+                "latitude",
+                "longitude",
+                "timezone",
+                "city",
+                "state",
+                "country",
+                "zip_code",
+                "sources"
+            ],
+            "title": "Location",
+            "type": "object"
+        },
+        "Program": {
+            "properties": {
+                "chain_of_thought": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "The chain of thought followed to identify the program",
+                    "type": "array"
+                },
+                "source": {
+                    "$ref": "#/$defs/Source",
+                    "title": "The source information of the program"
+                },
+                "name": {
+                    "title": "The name of the program",
+                    "type": "string"
+                },
+                "description": {
+                    "title": "The description of the program",
+                    "type": "string"
+                },
+                "contacts": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/Contact"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "The contact information for the program"
+                },
+                "url": {
+                    "format": "uri",
+                    "maxLength": 2083,
+                    "minLength": 1,
+                    "title": "The URL of the program",
+                    "type": "string"
+                },
+                "login_required": {
+                    "title": "Whether login is required to access the program",
+                    "type": "boolean"
+                },
+                "is_free": {
+                    "title": "Whether the program is free",
+                    "type": "boolean"
+                },
+                "additional_links": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/ActionableLink"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Additional relevant links for the program"
+                }
+            },
+            "required": [
+                "chain_of_thought",
+                "source",
+                "name",
+                "description",
+                "url",
+                "login_required",
+                "is_free"
+            ],
+            "title": "Program",
+            "type": "object"
+        },
+        "Schedule": {
+            "properties": {
+                "chain_of_thought": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "The chain of thought followed to identify the daily schedule",
+                    "type": "array"
+                },
+                "source": {
+                    "$ref": "#/$defs/Source",
+                    "title": "The source information of the daily schedule"
+                },
+                "resumption_time": {
+                    "format": "time",
+                    "title": "The resumption time of the school",
+                    "type": "string"
+                },
+                "dismissal_time": {
+                    "format": "time",
+                    "title": "The dismissal time of the school",
+                    "type": "string"
+                },
+                "early_dismissal_time": {
+                    "anyOf": [
+                        {
+                            "format": "time",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "The early dismissal time of the school"
+                },
+                "is_recuring": {
+                    "title": "Whether the schedule is recurring",
+                    "type": "boolean"
+                },
+                "applicable_weekdays": {
+                    "items": {
+                        "$ref": "#/$defs/WeekDays"
+                    },
+                    "title": "The days of the week for the schedule",
+                    "type": "array",
+                    "uniqueItems": true
+                },
+                "is_entire_school": {
+                    "title": "Whether the schedule applies to the entire school",
+                    "type": "boolean"
+                },
+                "grades": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/GradeWithoutAge"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "The grades for which the schedule apply, if not the entire school"
+                }
+            },
+            "required": [
+                "chain_of_thought",
+                "source",
+                "resumption_time",
+                "dismissal_time",
+                "is_recuring",
+                "applicable_weekdays",
+                "is_entire_school"
+            ],
+            "title": "Schedule",
+            "type": "object"
+        },
+        "School": {
+            "properties": {
+                "chain_of_thought": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "The chain of thought followed to extract the school information",
+                    "type": "array"
+                },
+                "school_data": {
+                    "$ref": "#/$defs/SchoolData",
+                    "title": "The school data extracted from the school website"
+                },
+                "school_divisions": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/DivisionGrades"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "The divisions extracted from the school website"
+                },
+                "school_hours": {
+                    "$ref": "#/$defs/SchoolHours",
+                    "title": "The school hours extracted from the school website"
+                },
+                "afterschool_and_summer_school": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/AfterSchoolAndSummerSchool"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "The afterschool and summer school programs extracted from the school website"
+                }
+            },
+            "required": [
+                "chain_of_thought",
+                "school_data",
+                "school_hours"
+            ],
+            "title": "School",
+            "type": "object"
+        },
+        "SchoolAge": {
+            "properties": {
+                "chain_of_thought": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "The chain of thought followed to identify the minimum and maximum ages",
+                    "type": "array"
+                },
+                "minimum": {
+                    "$ref": "#/$defs/Age",
+                    "title": "The minimum age"
+                },
+                "maximum": {
+                    "$ref": "#/$defs/Age",
+                    "title": "The maximum age"
+                }
+            },
+            "required": [
+                "chain_of_thought",
+                "minimum",
+                "maximum"
+            ],
+            "title": "SchoolAge",
+            "type": "object"
+        },
+        "SchoolData": {
+            "properties": {
+                "chain_of_thought": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "The chain of thought followed during the extraction process",
+                    "type": "array"
+                },
+                "name": {
+                    "title": "The name of the school",
+                    "type": "string"
+                },
+                "name_alias": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Alternative names or commonly used abbreviations for the school name. For example \"ISD\" for \"International School of Denver\"",
+                    "type": "array"
+                },
+                "url": {
+                    "format": "uri",
+                    "maxLength": 2083,
+                    "minLength": 1,
+                    "title": "The URL of the school website",
+                    "type": "string"
+                },
+                "url_architecture": {
+                    "$ref": "#/$defs/UrlArchitecture",
+                    "title": "The architecture of the school URL"
+                },
+                "pta_url": {
+                    "anyOf": [
+                        {
+                            "format": "uri",
+                            "maxLength": 2083,
+                            "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "The URL of the Parent-Teacher Association if available"
+                },
+                "contact": {
+                    "$ref": "#/$defs/Contact",
+                    "title": "The contact information for the school"
+                },
+                "locations": {
+                    "items": {
+                        "$ref": "#/$defs/Location"
+                    },
+                    "title": "The location information for the school",
+                    "type": "array"
+                },
+                "email_domains": {
+                    "items": {
+                        "$ref": "#/$defs/EmailDomain"
+                    },
+                    "title": "The email domains used by the school",
+                    "type": "array"
+                },
+                "parent_handbook_url": {
+                    "anyOf": [
+                        {
+                            "format": "uri",
+                            "maxLength": 2083,
+                            "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "The URL of the school parent handbook if available"
+                },
+                "grade": {
+                    "$ref": "#/$defs/SchoolGrade",
+                    "title": "The minimum and maximum grades offered by the school"
+                },
+                "age": {
+                    "$ref": "#/$defs/SchoolAge",
+                    "title": "The minimum and maximum ages of students accepted by the school"
+                },
+                "social_media": {
+                    "default": [],
+                    "items": {
+                        "$ref": "#/$defs/SocialMedia"
+                    },
+                    "title": "The social media links for the school",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "chain_of_thought",
+                "name",
+                "name_alias",
+                "url",
+                "url_architecture",
+                "contact",
+                "locations",
+                "email_domains",
+                "grade",
+                "age"
+            ],
+            "title": "SchoolData",
+            "type": "object"
+        },
+        "SchoolGrade": {
+            "properties": {
+                "chain_of_thought": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "The chain of thought followed to identify the minimum and maximum grades",
+                    "type": "array"
+                },
+                "minimum": {
+                    "$ref": "#/$defs/GradeWithoutAge",
+                    "title": "The minimum grade"
+                },
+                "maximum": {
+                    "$ref": "#/$defs/GradeWithoutAge",
+                    "title": "The maximum grade"
+                }
+            },
+            "required": [
+                "chain_of_thought",
+                "minimum",
+                "maximum"
+            ],
+            "title": "SchoolGrade",
+            "type": "object"
+        },
+        "SchoolHours": {
+            "properties": {
+                "regular_schedule": {
+                    "$ref": "#/$defs/Schedule",
+                    "title": "The regular school hours"
+                },
+                "special_schedule": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "$ref": "#/$defs/Schedule"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "The special school hours"
+                }
+            },
+            "required": [
+                "regular_schedule"
+            ],
+            "title": "SchoolHours",
+            "type": "object"
+        },
+        "SocialMedia": {
+            "properties": {
+                "chain_of_thought": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "The chain of thought followed to identify the social media platform",
+                    "type": "array"
+                },
+                "source": {
+                    "$ref": "#/$defs/Source",
+                    "title": "The source information of the social media"
+                },
+                "name": {
+                    "title": "The name of the social media platform",
+                    "type": "string"
+                },
+                "url": {
+                    "format": "uri",
+                    "maxLength": 2083,
+                    "minLength": 1,
+                    "title": "The URL of the social media platform",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "chain_of_thought",
+                "source",
+                "name",
+                "url"
+            ],
+            "title": "SocialMedia",
+            "type": "object"
+        },
+        "Source": {
+            "properties": {
+                "is_inferred": {
+                    "title": "Whether the data was inferred or directly extracted",
+                    "type": "boolean"
+                },
+                "url": {
+                    "anyOf": [
+                        {
+                            "format": "uri",
+                            "maxLength": 2083,
+                            "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "The URL of the source page of the extracted data"
+                },
+                "tool": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "The tool used to extract the data"
+                }
+            },
+            "required": [
+                "is_inferred"
+            ],
+            "title": "Source",
+            "type": "object"
+        },
+        "UrlArchitecture": {
+            "enum": [
+                "root",
+                "subdomain",
+                "path"
+            ],
+            "title": "UrlArchitecture",
+            "type": "string"
+        },
+        "WeekDays": {
+            "enum": [
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday"
+            ],
+            "title": "WeekDays",
+            "type": "string"
+        }
+    },
+    "properties": {
+        "chain_of_thought": {
+            "items": {
+                "type": "string"
+            },
+            "title": "The chain of thought followed to extract the school information",
+            "type": "array"
+        },
+        "school": {
+            "$ref": "#/$defs/School",
+            "title": "The extracted school information"
+        },
+        "district": {
+            "anyOf": [
+                {
+                    "$ref": "#/$defs/District"
+                },
+                {
+                    "type": "null"
+                }
+            ],
+            "default": null,
+            "title": "The extracted district information"
+        }
+    },
+    "required": [
+        "chain_of_thought",
+        "school"
+    ],
+    "title": "ExtractedData",
+    "type": "object"
+}

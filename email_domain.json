@@ -1,0 +1,68 @@
+{
+    "$defs": {
+        "Source": {
+            "properties": {
+                "is_inferred": {
+                    "title": "Whether the data was inferred or directly extracted",
+                    "type": "boolean"
+                },
+                "url": {
+                    "anyOf": [
+                        {
+                            "format": "uri",
+                            "maxLength": 2083,
+                            "minLength": 1,
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "The URL of the source page of the extracted data"
+                },
+                "tool": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "The tool used to extract the data"
+                }
+            },
+            "required": [
+                "is_inferred"
+            ],
+            "title": "Source",
+            "type": "object"
+        }
+    },
+    "properties": {
+        "chain_of_thought": {
+            "items": {
+                "type": "string"
+            },
+            "title": "The chain of thought followed to identify the email domain",
+            "type": "array"
+        },
+        "source": {
+            "$ref": "#/$defs/Source",
+            "title": "The source information of the email domain"
+        },
+        "domain": {
+            "title": "The domain of the email address",
+            "type": "string"
+        }
+    },
+    "required": [
+        "chain_of_thought",
+        "source",
+        "domain"
+    ],
+    "title": "EmailDomain",
+    "type": "object"
+}
